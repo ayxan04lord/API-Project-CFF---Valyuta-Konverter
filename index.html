@@ -7,7 +7,82 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
+    <header class="header">
+        <nav class="header__navbar">
+            <div class="header__logo">
+                <a class="header__logo-link" href="#">
+                    <img class="header__logo-img" src="assets/img/logo_dark.png" alt="Logo Dark">
+                </a>
+            </div>
+            <div class="header__menu">
+                <ul class="header__menu-list">
+                    <li class="header__menu-item header__menu-item--active">
+                        <a class="header__menu-link" href="#">Банк</a>
+                    </li>
+                    <li class="header__menu-item">
+                        <a class="header__menu-link" href="#">Бизнес</a>
+                    </li>
+                    <li class="header__menu-item">
+                        <a class="header__menu-link" href="#">Инвестиции</a>
+                    </li>
+                    <li class="header__menu-item">
+                        <a class="header__menu-link" href="#">Страхование</a>
+                    </li>
+                    <li class="header__menu-item">
+                        <a class="header__menu-link" href="#">Мобайл</a>
+                    </li>
+                    <li class="header__menu-item">
+                        <a class="header__menu-link" href="#">Путешествия</a>
+                    </li>
+                    <li class="header__menu-item">
+                        <a class="header__menu-link" href="#">Развлечения</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="header__auth">
+                <button class="header__auth-btn">Войти</button>
+            </div>
+        </nav>
+    </header>
+    <main class="main">
+        <section class="converter">
+            <div class="converter__title">
+                <h2 class="converter__title-text">Конвертер валют онлайн</h2>
+            </div>
+            <div class="converter__block">
+                <div class="converter__from">
+                    <div class="converter__from-title">
+                        <p class="converter__from-title-text">У меня есть</p>
+                    </div>
+                    <div class="converter__from-menu">
+                        <button type="button" class="converter__from-menu-btn" data-from-currency="rub">RUB</button>
+                        <button type="button" class="converter__from-menu-btn" data-from-currency="usd">USD</button>
+                        <button type="button" class="converter__from-menu-btn" data-from-currency="eur">EUR</button>
+                        <button type="button" class="converter__from-menu-btn" data-from-currency="gbp">GBP</button>
+                    </div>
+                    <div class="converter__from-report">
+                        <input type="number" class="converter__from-report-value" id="from_report_value" value="0">
+                        <p class="converter__from-report-current-rate" id="from_report_current_rate">0 USD = 0 USD</p>
+                    </div>
+                </div>
+                <div class="converter__to">
+                    <div class="converter__to-title">
+                        <p class="converter__to-title-text">Хочу приобрести</p>
+                    </div>
+                    <div class="converter__to-menu">
+                        <button type="button" class="converter__to-menu-btn" data-to-currency="rub">RUB</button>
+                        <button type="button" class="converter__to-menu-btn" data-to-currency="usd">USD</button>
+                        <button type="button" class="converter__to-menu-btn" data-to-currency="eur">EUR</button>
+                        <button type="button" class="converter__to-menu-btn" data-to-currency="gbp">GBP</button>
+                    </div>
+                    <div class="converter__to-report">
+                        <input type="number" class="converter__to-report-value" id="to_report_value" value="0">
+                        <p class="converter__to-report-current-rate" id="to_report_current_rate">0 USD = 0 USD</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 </body>
 </html>
 <script src="js/main.js"></script>
