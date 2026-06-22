@@ -1,88 +1,408 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API - Valyuta Konverter</title>
+    <title>AzBank - Valyuta Konverter</title>
+    <link rel="icon" href="img/favicon.ico">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <header class="header">
-        <nav class="header__navbar">
-            <div class="header__logo">
-                <a class="header__logo-link" href="#">
-                    <img class="header__logo-img" src="img/logo_dark.png" alt="Logo Dark">
-                </a>
+
+<!-- ========== AUTH MODAL ========== -->
+<div class="modal-overlay" id="authModal">
+    <div class="modal">
+        <button class="modal__close" id="closeModal"><i class="fa fa-times"></i></button>
+        <div class="modal__tabs">
+            <button class="modal__tab modal__tab--active" id="tabLogin">Giriş</button>
+            <button class="modal__tab" id="tabRegister">Qeydiyyat</button>
+        </div>
+        <!-- Login Form -->
+        <form class="auth-form" id="loginForm">
+            <h2 class="auth-form__title">Hesabınıza daxil olun</h2>
+            <div class="form-group">
+                <label>E-poçt</label>
+                <input type="email" id="loginEmail" placeholder="email@example.com" required>
             </div>
-            <div class="header__menu">
-                <ul class="header__menu-list">
-                    <li class="header__menu-item header__menu-item--active">
-                        <a class="header__menu-link" href="#">Банк</a>
-                    </li>
-                    <li class="header__menu-item">
-                        <a class="header__menu-link" href="#">Бизнес</a>
-                    </li>
-                    <li class="header__menu-item">
-                        <a class="header__menu-link" href="#">Инвестиции</a>
-                    </li>
-                    <li class="header__menu-item">
-                        <a class="header__menu-link" href="#">Страхование</a>
-                    </li>
-                    <li class="header__menu-item">
-                        <a class="header__menu-link" href="#">Мобайл</a>
-                    </li>
-                    <li class="header__menu-item">
-                        <a class="header__menu-link" href="#">Путешествия</a>
-                    </li>
-                    <li class="header__menu-item">
-                        <a class="header__menu-link" href="#">Развлечения</a>
-                    </li>
-                </ul>
+            <div class="form-group">
+                <label>Şifrə</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" required>
             </div>
-            <div class="header__auth">
-                <button class="header__auth-btn">Войти</button>
+            <p class="auth-form__error" id="loginError"></p>
+            <button type="submit" class="btn btn--primary btn--full">Daxil ol</button>
+        </form>
+        <!-- Register Form -->
+        <form class="auth-form hidden" id="registerForm">
+            <h2 class="auth-form__title">Yeni hesab yaradın</h2>
+            <div class="form-group">
+                <label>Ad Soyad</label>
+                <input type="text" id="regName" placeholder="Adınız Soyadınız" required>
             </div>
-        </nav>
-    </header>
-    <main class="main">
-        <section class="converter">
-            <div class="converter__title">
-                <h2 class="converter__title-text">Конвертер валют онлайн</h2>
+            <div class="form-group">
+                <label>E-poçt</label>
+                <input type="email" id="regEmail" placeholder="email@example.com" required>
             </div>
-            <div class="converter__block">
-                <div class="converter__from">
-                    <div class="converter__from-title">
-                        <p class="converter__from-title-text">У меня есть</p>
+            <div class="form-group">
+                <label>Şifrə</label>
+                <input type="password" id="regPassword" placeholder="Minimum 6 simvol" required>
+            </div>
+            <div class="form-group">
+                <label>Bank seçin</label>
+                <select id="regBank">
+                    <option value="abbank">ABB (Azərbaycan Beynəlxalq Bankı)</option>
+                    <option value="kapital">Kapital Bank</option>
+                    <option value="pasha">PAŞA Bank</option>
+                    <option value="rabitabank">RabитаBank</option>
+                    <option value="atb">Azər-Türk Bank</option>
+                    <option value="expressbank">Express Bank</option>
+                    <option value="unibank">Unibank</option>
+                    <option value="accessbank">AccessBank</option>
+                </select>
+            </div>
+            <p class="auth-form__error" id="registerError"></p>
+            <button type="submit" class="btn btn--primary btn--full">Qeydiyyatdan keç</button>
+        </form>
+    </div>
+</div>
+
+<!-- ========== TRANSFER MODAL ========== -->
+<div class="modal-overlay" id="transferModal">
+    <div class="modal modal--wide">
+        <button class="modal__close" id="closeTransferModal"><i class="fa fa-times"></i></button>
+        <h2 class="modal__title">Pul Köçürmə</h2>
+        <form id="transferForm">
+            <div class="form-group">
+                <label>Alıcının E-poçtu</label>
+                <input type="email" id="transferTo" placeholder="alici@example.com" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Məbləğ</label>
+                    <input type="number" id="transferAmount" placeholder="0.00" min="0.01" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Valyuta</label>
+                    <select id="transferCurrency">
+                        <option value="AZN">AZN</option>
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="RUB">RUB</option>
+                        <option value="TRY">TRY</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Qeyd (istəğə bağlı)</label>
+                <input type="text" id="transferNote" placeholder="Ödənişin məqsədi...">
+            </div>
+            <div class="transfer-fee-info" id="transferFeeInfo"></div>
+            <p class="auth-form__error" id="transferError"></p>
+            <button type="submit" class="btn btn--primary btn--full">Köçür</button>
+        </form>
+    </div>
+</div>
+
+<!-- ========== HEADER ========== -->
+<header class="header">
+    <nav class="header__navbar">
+        <div class="header__logo">
+            <a class="header__logo-link" href="#" id="navHome">
+                <img class="header__logo-img" src="img/logo_dark.png" alt="AzBank Logo" id="logoImg">
+            </a>
+        </div>
+        <div class="header__menu">
+            <ul class="header__menu-list">
+                <li class="header__menu-item header__menu-item--active">
+                    <a class="header__menu-link nav-link" href="#" data-page="converter">Konverter</a>
+                </li>
+                <li class="header__menu-item">
+                    <a class="header__menu-link nav-link" href="#" data-page="banks">Banklar</a>
+                </li>
+                <li class="header__menu-item">
+                    <a class="header__menu-link nav-link" href="#" data-page="rates">Məzənnələr</a>
+                </li>
+                <li class="header__menu-item">
+                    <a class="header__menu-link nav-link" href="#" data-page="transfer">Köçürmə</a>
+                </li>
+                <li class="header__menu-item">
+                    <a class="header__menu-link nav-link" href="#" data-page="conditions">Şərtlər</a>
+                </li>
+            </ul>
+        </div>
+        <div class="header__actions">
+            <button class="theme-toggle" id="themeToggle" title="Tema dəyiş">
+                <i class="fa fa-moon" id="themeIcon"></i>
+            </button>
+            <div class="header__auth" id="authGuest">
+                <button class="btn btn--outline" id="openAuthModal">Giriş / Qeydiyyat</button>
+            </div>
+            <div class="header__user hidden" id="authUser">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-dropdown" id="userDropdown">
+                    <p class="user-dropdown__name" id="userDropdownName">İstifadəçi</p>
+                    <p class="user-dropdown__bank" id="userDropdownBank"></p>
+                    <hr>
+                    <a href="#" class="user-dropdown__link nav-link" data-page="profile">
+                        <i class="fa fa-user"></i> Profil
+                    </a>
+                    <a href="#" class="user-dropdown__link nav-link" data-page="transfer">
+                        <i class="fa fa-paper-plane"></i> Köçürmə
+                    </a>
+                    <a href="#" class="user-dropdown__link nav-link" data-page="history">
+                        <i class="fa fa-history"></i> Tarixçə
+                    </a>
+                    <hr>
+                    <a href="#" class="user-dropdown__link user-dropdown__link--danger" id="logoutBtn">
+                        <i class="fa fa-sign-out-alt"></i> Çıxış
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- ========== MAIN ========== -->
+<main class="main">
+
+    <!-- PAGE: CONVERTER -->
+    <section class="page" id="page-converter">
+        <div class="container">
+            <div class="converter-hero">
+                <h1 class="converter-hero__title">Valyuta Konverteri</h1>
+                <p class="converter-hero__sub">Real vaxt məzənnələri ilə dərhal çevirin</p>
+            </div>
+            <div class="converter-card">
+                <div class="converter__block">
+                    <div class="converter__side">
+                        <p class="converter__label">Məndə var</p>
+                        <div class="converter__currency-tabs" id="fromTabs"></div>
+                        <div class="converter__input-box">
+                            <input type="number" class="converter__input" id="from_report_value" value="1" min="0">
+                            <p class="converter__rate" id="from_report_current_rate">— yüklənir...</p>
+                        </div>
                     </div>
-                    <div class="converter__from-menu">
-                        <button type="button" class="converter__from-menu-btn" data-from-currency="rub">RUB</button>
-                        <button type="button" class="converter__from-menu-btn" data-from-currency="usd">USD</button>
-                        <button type="button" class="converter__from-menu-btn" data-from-currency="eur">EUR</button>
-                        <button type="button" class="converter__from-menu-btn" data-from-currency="gbp">GBP</button>
-                    </div>
-                    <div class="converter__from-report">
-                        <input type="number" class="converter__from-report-value" id="from_report_value" value="0">
-                        <p class="converter__from-report-current-rate" id="from_report_current_rate">0 USD = 0 USD</p>
+                    <button class="converter__swap" id="swapBtn" title="Dəyiş">
+                        <i class="fa fa-exchange-alt"></i>
+                    </button>
+                    <div class="converter__side">
+                        <p class="converter__label">Almaq istəyirəm</p>
+                        <div class="converter__currency-tabs" id="toTabs"></div>
+                        <div class="converter__input-box">
+                            <input type="number" class="converter__input" id="to_report_value" value="0" min="0">
+                            <p class="converter__rate" id="to_report_current_rate">— yüklənir...</p>
+                        </div>
                     </div>
                 </div>
-                <div class="converter__to">
-                    <div class="converter__to-title">
-                        <p class="converter__to-title-text">Хочу приобрести</p>
-                    </div>
-                    <div class="converter__to-menu">
-                        <button type="button" class="converter__to-menu-btn" data-to-currency="rub">RUB</button>
-                        <button type="button" class="converter__to-menu-btn" data-to-currency="usd">USD</button>
-                        <button type="button" class="converter__to-menu-btn" data-to-currency="eur">EUR</button>
-                        <button type="button" class="converter__to-menu-btn" data-to-currency="gbp">GBP</button>
-                    </div>
-                    <div class="converter__to-report">
-                        <input type="number" class="converter__to-report-value" id="to_report_value" value="0">
-                        <p class="converter__to-report-current-rate" id="to_report_current_rate">0 USD = 0 USD</p>
-                    </div>
+                <div class="converter__footer">
+                    <span class="converter__update-time" id="updateTime"></span>
+                    <button class="btn btn--primary" id="convertBtn">Çevir</button>
                 </div>
             </div>
-        </section>
-    </main>
+            <!-- Quick rates strip -->
+            <div class="quick-rates" id="quickRates"></div>
+        </div>
+    </section>
+
+    <!-- PAGE: BANKS -->
+    <section class="page hidden" id="page-banks">
+        <div class="container">
+            <h1 class="page-title">Azərbaycan Bankları</h1>
+            <p class="page-subtitle">Banklar üzrə valyuta mübadiləsi şərtləri</p>
+            <div class="bank-filter">
+                <button class="filter-btn filter-btn--active" data-filter="all">Hamısı</button>
+                <button class="filter-btn" data-filter="az">Azərbaycan</button>
+                <button class="filter-btn" data-filter="intl">Beynəlxalq</button>
+            </div>
+            <div class="banks-grid" id="banksGrid"></div>
+        </div>
+    </section>
+
+    <!-- PAGE: RATES TABLE -->
+    <section class="page hidden" id="page-rates">
+        <div class="container">
+            <h1 class="page-title">Canlı Məzənnə Cədvəli</h1>
+            <p class="page-subtitle">Bütün valyutaların AZN-ə nisbəti</p>
+            <div class="rates-search-row">
+                <input type="text" class="rates-search" id="ratesSearch" placeholder="Valyuta axtar...">
+            </div>
+            <div class="rates-table-wrap">
+                <table class="rates-table" id="ratesTable">
+                    <thead>
+                        <tr>
+                            <th>Valyuta</th>
+                            <th>Kod</th>
+                            <th>1 AZN = ? </th>
+                            <th>1 ? = AZN</th>
+                            <th>Dəyişim</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ratesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE: TRANSFER -->
+    <section class="page hidden" id="page-transfer">
+        <div class="container container--narrow">
+            <h1 class="page-title">Pul Köçürmə</h1>
+            <p class="page-subtitle">Hesabınızdan digər istifadəçilərə pul göndərin</p>
+            <div id="transferLoginWarn" class="warn-box hidden">
+                <i class="fa fa-lock"></i>
+                <p>Pul köçürmə üçün hesabınıza daxil olun.</p>
+                <button class="btn btn--primary" id="transferLoginBtn">Giriş / Qeydiyyat</button>
+            </div>
+            <div id="transferPanel" class="transfer-panel hidden">
+                <div class="balance-cards" id="balanceCards"></div>
+                <div class="transfer-form-card">
+                    <h3>Köçürmə et</h3>
+                    <div class="form-group">
+                        <label>Alıcının E-poçtu</label>
+                        <input type="email" id="tTo" placeholder="alici@example.com">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Məbləğ</label>
+                            <input type="number" id="tAmount" placeholder="0.00" min="0.01" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Valyuta</label>
+                            <select id="tCurrency">
+                                <option value="AZN">AZN</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                                <option value="RUB">RUB</option>
+                                <option value="TRY">TRY</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Qeyd</label>
+                        <input type="text" id="tNote" placeholder="Ödənişin məqsədi...">
+                    </div>
+                    <div class="transfer-fee-info" id="tFeeInfo"></div>
+                    <p class="auth-form__error" id="tError"></p>
+                    <button class="btn btn--primary btn--full" id="doTransferBtn">Köçür</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE: CONDITIONS -->
+    <section class="page hidden" id="page-conditions">
+        <div class="container">
+            <h1 class="page-title">Valyuta Mübadiləsi Şərtləri</h1>
+            <p class="page-subtitle">Azərbaycan bankları və beynəlxalq banklar üzrə müqayisəli şərtlər</p>
+            <div class="conditions-tabs">
+                <button class="cond-tab cond-tab--active" data-ctab="az">Azərbaycan Bankları</button>
+                <button class="cond-tab" data-ctab="intl">Beynəlxalq Banklar</button>
+                <button class="cond-tab" data-ctab="rules">Qaydalar</button>
+            </div>
+            <div class="conditions-content" id="condAz"></div>
+            <div class="conditions-content hidden" id="condIntl"></div>
+            <div class="conditions-content hidden" id="condRules"></div>
+        </div>
+    </section>
+
+    <!-- PAGE: PROFILE -->
+    <section class="page hidden" id="page-profile">
+        <div class="container">
+            <div id="profileLoginWarn" class="warn-box hidden">
+                <i class="fa fa-lock"></i>
+                <p>Profili görmək üçün daxil olun.</p>
+                <button class="btn btn--primary" id="profileLoginBtn">Giriş / Qeydiyyat</button>
+            </div>
+            <div id="profilePanel" class="hidden">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">A</div>
+                    <div class="profile-info">
+                        <h2 id="profileName">İstifadəçi</h2>
+                        <p id="profileEmail" class="text-muted"></p>
+                        <p id="profileBank" class="profile-bank-badge"></p>
+                    </div>
+                </div>
+                <div class="balance-cards" id="profileBalanceCards"></div>
+                <div class="profile-section">
+                    <h3>Depozit et</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Məbləğ</label>
+                            <input type="number" id="depositAmount" placeholder="0.00" min="1" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Valyuta</label>
+                            <select id="depositCurrency">
+                                <option value="AZN">AZN</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                                <option value="RUB">RUB</option>
+                                <option value="TRY">TRY</option>
+                            </select>
+                        </div>
+                        <div class="form-group form-group--btn">
+                            <button class="btn btn--primary" id="depositBtn">Depozit Et</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-section">
+                    <h3>Son Əməliyyatlar</h3>
+                    <div id="txHistory" class="tx-list"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE: HISTORY -->
+    <section class="page hidden" id="page-history">
+        <div class="container">
+            <h1 class="page-title">Əməliyyat Tarixçəsi</h1>
+            <div id="historyLoginWarn" class="warn-box hidden">
+                <i class="fa fa-lock"></i>
+                <p>Tarixçəni görmək üçün daxil olun.</p>
+                <button class="btn btn--primary" id="historyLoginBtn">Giriş / Qeydiyyat</button>
+            </div>
+            <div id="historyPanel" class="hidden">
+                <div class="tx-list" id="historyList"></div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer__grid">
+            <div>
+                <h4>AzBank Konverter</h4>
+                <p>Azərbaycanın ən dəqiq valyuta konverteri</p>
+            </div>
+            <div>
+                <h4>Sürətli Keçid</h4>
+                <a href="#" class="nav-link footer-link" data-page="converter">Konverter</a>
+                <a href="#" class="nav-link footer-link" data-page="banks">Banklar</a>
+                <a href="#" class="nav-link footer-link" data-page="rates">Məzənnələr</a>
+                <a href="#" class="nav-link footer-link" data-page="conditions">Şərtlər</a>
+            </div>
+            <div>
+                <h4>Əlaqə</h4>
+                <p>support@azbank.az</p>
+                <p>+994 12 000 00 00</p>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <p>© 2024 AzBank Konverter. Bütün hüquqlar qorunur.</p>
+        </div>
+    </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
-<script src="js/main.js"></script>
